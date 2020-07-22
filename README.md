@@ -1,5 +1,5 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/snyk-tech-services/snyk-prevent-gh-commit-status/badge.svg)](https://snyk.io/test/github/snyk-tech-services/snyk-prevent-gh-commit-status)
-
+[![CircleCI](https://circleci.com/gh/snyk-tech-services/snyk-prevent-gh-commit-status.svg?style=svg)](https://circleci.com/gh/snyk-tech-services/snyk-prevent-gh-commit-status)
 
 ## snyk-prevent-gh-commit-status
 Little module to POST commit status of a PR the result of [snyk-delta](https://github.com/snyk-tech-services/snyk-delta) executed in the CI.
