@@ -56,6 +56,8 @@ Example in CircleCI using an Orb for a Go Modules project [example PR](https://g
 
 More CI examples soon
 
+### Point to GHE
+export GH_API='https://ghe-hostname/apiendpoint'
 
 #### Additional option - Debug
 ```
