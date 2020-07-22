@@ -5,7 +5,6 @@ import * as path from 'path';
 
 const fixturesFolderPath = path.resolve(__dirname, '..') + '/fixtures/';
 
-
 beforeAll(() => {
   return nock('https://snyk.io')
     .persist()

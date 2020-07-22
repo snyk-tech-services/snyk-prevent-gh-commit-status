@@ -1,0 +1,64 @@
+{
+  "prepare": [
+    "@semantic-release/npm",
+    {
+      "//": "adds a file to identify a build as a standalone binary",
+      "path": "@semantic-release/exec",
+      "cmd": "echo '' > dist/STANDALONE"
+    },
+    {
+      "//": "build the alpine, macos, linux and windows binaries",
+      "path": "@semantic-release/exec",
+      "cmd": "npx pkg . -t node12-linux-x64,node12-macos-x64,node12-win-x64"
+    },
+    {
+      "//": "shasum all binaries",
+      "path": "@semantic-release/exec",
+      "cmd": "shasum -a 256 snyk-prevent-gh-commit-status-linux > snyk-prevent-gh-commit-status-linux.sha256 && shasum -a 256 snyk-prevent-gh-commit-status-macos > snyk-prevent-gh-commit-status-macos.sha256 && shasum -a 256 snyk-prevent-gh-commit-status-win.exe > snyk-prevent-gh-commit-status-win.exe.sha256"
+    },
+    {
+      "//": "removes the file we use to identify a build as a standalone binary",
+      "path": "@semantic-release/exec",
+      "cmd": "rm dist/STANDALONE"
+    }
+  ],
+  "publish": [
+    "@semantic-release/npm",
+    {
+      "path": "@semantic-release/github",
+      "assets": [
+        {
+          "path": "./snyk-prevent-gh-commit-status-linux",
+          "name": "snyk-prevent-gh-commit-status-linux",
+          "label": "snyk-prevent-gh-commit-status-linux"
+        },
+        {
+          "path": "./snyk-prevent-gh-commit-status-linux.sha256",
+          "name": "snyk-prevent-gh-commit-status-linux.sha256",
+          "label": "snyk-prevent-gh-commit-status-linux.sha256"
+        },
+        {
+          "path": "./snyk-prevent-gh-commit-status-macos",
+          "name": "snyk-prevent-gh-commit-status-macos",
+          "label": "snyk-prevent-gh-commit-status-macos"
+        },
+        {
+          "path": "./snyk-prevent-gh-commit-status-macos.sha256",
+          "name": "snyk-prevent-gh-commit-status-macos.sha256",
+          "label": "snyk-prevent-gh-commit-status-macos.sha256"
+        },
+        {
+          "path": "./snyk-prevent-gh-commit-status-win.exe",
+          "name": "snyk-prevent-gh-commit-status-win.exe",
+          "label": "snyk-prevent-gh-commit-status-win.exe"
+        },
+        {
+          "path": "./snyk-prevent-gh-commit-status-win.exe.sha256",
+          "name": "snyk-prevent-gh-commit-status-win.exe.sha256",
+          "label": "snyk-prevent-gh-commit-status-win.exe.sha256"
+        }
+      ]
+    }
+  ],
+  "branches": ["master"]
+}

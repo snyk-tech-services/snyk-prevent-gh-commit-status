@@ -64,10 +64,5 @@
     "scripts": [
       "dist/**/*.js"
     ]
-  },
-  "release": {
-    "branches": [
-      "master"
-    ]
   }
 }
