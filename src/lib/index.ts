@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import 'source-map-support/register';
 
 import { getDelta } from 'snyk-delta';
