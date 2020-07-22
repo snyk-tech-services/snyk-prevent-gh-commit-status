@@ -1,9 +1,10 @@
 import * as nock from 'nock';
 import * as fs from 'fs';
 import { main } from '../../src/lib/index';
+import * as path from 'path';
 
-const fixturesFolderPath =
-  '/home/antoine/Documents/SnykTSDev/snyk-prevent-gh-commit-status/test/fixtures/';
+const fixturesFolderPath = path.resolve(__dirname, '..') + '/fixtures/';
+
 
 beforeAll(() => {
   return nock('https://snyk.io')
@@ -41,7 +42,7 @@ describe('Testing behaviors', () => {
     process.argv = [
       '',
       '',
-      '/home/antoine/Documents/SnykTSDev/snyk-prevent-gh-commit-status/test/fixtures/snyktest-gomod.json',
+      path.resolve(__dirname, '..') + '/fixtures/snyktest-gomod.json',
       '123',
       '123',
       '123',
@@ -62,7 +63,7 @@ describe('Testing behaviors', () => {
     process.argv = [
       '',
       '',
-      '/home/antoine/Documents/SnykTSDev/snyk-prevent-gh-commit-status/test/fixtures/snyktest-gomod.json',
+      path.resolve(__dirname, '..') + '/fixtures/snyktest-gomod.json',
       '123',
       '123',
       '123',
