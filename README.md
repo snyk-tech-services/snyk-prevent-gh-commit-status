@@ -7,7 +7,7 @@ Little module to POST commit status of a PR the result of [snyk-delta](https://g
 ![](https://storage.googleapis.com/snyk-technical-services.appspot.com/gh_commit_status.png)
 
 ## Usage
-1. In your CI pipeline, run the SNYK CLI or Orb or plugin with the option to export the json result into a file (`--json-output-file=snykTestResults.json`).
+1. In your CI pipeline, run the SNYK CLI or Orb or plugin with the option to export the json result into a file (`--json-file-output=snykTestResults.json`).
 
 2. Call snyk-prevent-gh-commit-status module or binary with the following arguments:
 
