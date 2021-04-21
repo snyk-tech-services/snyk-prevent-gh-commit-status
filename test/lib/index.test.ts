@@ -13,9 +13,11 @@ beforeAll(() => {
       switch (uri) {
         case '/api/v1/org/Playground/projects':
           return fs.readFileSync(
-            fixturesFolderPath + 'api-response-projects.json',
+            fixturesFolderPath + 'api-response-projects-all-projects.json',
           );
         case '/api/v1/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786/issues':
+          return fs.readFileSync(fixturesFolderPath + 'apitest-gomod.json');
+        case '/api/v1/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272787/issues':
           return fs.readFileSync(fixturesFolderPath + 'apitest-gomod.json');
         default:
       }
@@ -48,14 +50,48 @@ describe('Testing behaviors', () => {
       '123',
     ];
     const response = await main();
-    expect(response).toEqual({
-      context: 'Snyk Prevent (Playground)',
-      description: 'No new issue found',
-      state: 'success',
-      // eslint-disable-next-line
-      target_url:
-        'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
-    });
+    expect(response).toEqual([
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+      },
+    ]);
+  });
+
+  test('Is it working with --all-projects?', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-gomod-all-projects.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    const response = await main();
+    expect(response).toEqual([
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+      },
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272787',
+      },
+    ]);
   });
 
   test('Is it working in debug?', async () => {
@@ -70,13 +106,15 @@ describe('Testing behaviors', () => {
       'debug',
     ];
     const response = await main();
-    expect(response).toEqual({
-      context: 'Snyk Prevent (Playground)',
-      description: 'No new issue found',
-      state: 'success',
-      // eslint-disable-next-line
-      target_url:
-        'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
-    });
+    expect(response).toEqual([
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+      },
+    ]);
   });
 });
