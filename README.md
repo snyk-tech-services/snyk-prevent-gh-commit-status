@@ -6,6 +6,13 @@ Little module to POST commit status of a PR the result of [snyk-delta](https://g
 
 ![](https://storage.googleapis.com/snyk-technical-services.appspot.com/gh_commit_status.png)
 
+## Installation
+- `npm i -g snyk-prevent-gh-commit-status`\
+OR
+- Don't install anything and use npx (if you're in Node ecosystem already)\
+OR
+- Download [release binaries for your system](https://github.com/snyk-tech-services/snyk-prevent-gh-commit-status/releases)
+
 ## Usage
 1. In your CI pipeline, run the SNYK CLI or Orb or plugin with the option to export the json result into a file (`--json-file-output=snykTestResults.json`).
 
