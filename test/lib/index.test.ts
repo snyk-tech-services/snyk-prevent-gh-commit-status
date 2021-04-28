@@ -62,6 +62,30 @@ describe('Testing behaviors', () => {
     ]);
   });
 
+  test('Is it working with displayTargetFile?', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-gomod-displayTargetFile.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    const response = await main();
+    expect(response).toEqual([
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+      },
+    ]);
+  });
+
   test('Is it working with --all-projects?', async () => {
     process.argv = [
       '',
