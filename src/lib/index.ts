@@ -50,7 +50,7 @@ const main = async () => {
       const parsedCurrentResults = JSON.parse(currentResults)
       const orgName = parsedCurrentResults.org;
       const projectID = parsedCurrentResults.projectId || '';
-      const targetFile = parsedCurrentResults.targetFile;
+      const targetFile = parsedCurrentResults.targetFile || parsedCurrentResults.displayTargetFile || 'TargetFile not found';
   
       let data: ghCommitStatus = {
           state: ghCommitStatusState.pending,
