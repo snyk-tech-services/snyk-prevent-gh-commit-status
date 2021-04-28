@@ -95,6 +95,7 @@ describe('Testing behaviors', () => {
   });
 
   test('Is it working in debug?', async () => {
+    process.env.SNYK_DEBUG = 'true';
     process.argv = [
       '',
       '',
@@ -103,7 +104,7 @@ describe('Testing behaviors', () => {
       '123',
       '123',
       '123',
-      'debug',
+      '',
     ];
     const response = await main();
     expect(response).toEqual([
@@ -114,6 +115,85 @@ describe('Testing behaviors', () => {
         // eslint-disable-next-line
         target_url:
           'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+      },
+    ]);
+    delete process.env.SNYK_DEBUG;
+  });
+
+  test('Is it working with --all-projects and unmonitored projects?', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-gomod-all-projects-with-unmonitored-project.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      'https://job123',
+    ];
+    const response = await main();
+    expect(response).toEqual([
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url: 'https://job123',
+      },
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url: 'https://job123',
+      },
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url: 'https://job123',
+      },
+    ]);
+  });
+
+  test('Is it working with --all-projects and unmonitored projects without job link?', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-gomod-all-projects-with-unmonitored-project.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    const response = await main();
+    expect(response).toEqual([
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+      },
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272787',
+      },
+      {
+        context: 'Snyk Prevent (Playground - go.mod)',
+        description: 'No new issue found',
+        state: 'success',
+        // eslint-disable-next-line
+        target_url:
+          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272788',
       },
     ]);
   });
