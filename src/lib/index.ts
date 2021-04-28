@@ -29,7 +29,8 @@ const main = async () => {
     const ghOrg = process.argv.slice(2)[2];
     const ghRepo = process.argv.slice(2)[3];
     const ghSha = process.argv.slice(2)[4];
-    const debug = process.argv.slice(2)[5] == 'debug' ? true : false;
+    const detailsLink = process.argv.slice(2)[5] || '';
+    const debug = process.env.SNYK_DEBUG ? true : false// process.argv.slice(2)[6] == 'debug' ? true : false;
     const jsonResultsFromSnykTest = fs
       .readFileSync(jsonResultsFilePath)
       .toString();
@@ -57,7 +58,9 @@ const main = async () => {
           description: 'Could not find project ID. Verify org tested against',
           context: `Snyk Prevent (${orgName} - ${targetFile})`,
       }
-      if(projectID != ''){
+      if(detailsLink != ''){
+        data.target_url = detailsLink
+      } else if(projectID != ''){
         data.target_url = `https://app.snyk.io/org/${orgName}/project/${projectID}`
       }
   

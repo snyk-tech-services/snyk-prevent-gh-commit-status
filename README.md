@@ -18,6 +18,9 @@ OR
 
 2. Call snyk-prevent-gh-commit-status module or binary with the following arguments:
 
+The link to CI Job is strongly recommended as it guides developers to the result set in the CI job.
+Enhancements are coming up to improve visibility and clarity on the issues findings.
+
 ```
 snyk-prevent-gh-commit-status-linux
  /path/to/snykTestResults.json 
@@ -25,6 +28,7 @@ snyk-prevent-gh-commit-status-linux
  <GH_ORG_NAME> 
  <GH_REPO_NAME> 
  <GH_COMMIT_SHA1>
+ <LINK_TO_CI_JOB - optional>
 ```
 ### Snyk CLI in bash
 ```
@@ -35,6 +39,7 @@ snyk-prevent-gh-commit-status-linux
     <GH_ORG_NAME> 
     <GH_REPO_NAME> 
     <CIRCLE_SHA1>
+    <LINK_TO_CI_JOB - optional>
 ```
 
 ### Snyk CLI in bash using npx
@@ -46,6 +51,7 @@ snyk-prevent-gh-commit-status-linux
     <GH_ORG_NAME> 
     <GH_REPO_NAME> 
     <CIRCLE_SHA1>
+    <LINK_TO_CI_JOB - optional>
 ```
 
 ### Circle CI
@@ -58,7 +64,7 @@ Example in CircleCI using an Orb for a Go Modules project [example PR](https://g
         monitor-on-build: false
         token-variable: SNYK_TOKEN
         additional-arguments: --json-file-output=snykTestResults.json
-    - run: ./snyk-prevent-gh-commit-status-linux ./snykTestResults.json ${GITHUB_TOKEN} ${CIRCLE_PROJECT_USERNAME} ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_SHA1}
+    - run: ./snyk-prevent-gh-commit-status-linux ./snykTestResults.json ${GITHUB_TOKEN} ${CIRCLE_PROJECT_USERNAME} ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_SHA1} ${CIRCLE_BUILD_URL}
 ```
 
 More CI examples soon
@@ -68,11 +74,12 @@ export GH_API='https://ghe-hostname/apiendpoint'
 
 #### Additional option - Debug
 ```
+export SNYK_DEBUG=true
 ./snyk-prevent-gh-commit-status-linux 
     ./snykTestResults.json 
     <GITHUB_TOKEN> 
     <GH_ORG_NAME> 
     <GH_REPO_NAME> 
     <CIRCLE_SHA1>
-    debug
+    <LINK_TO_CI_JOB - optional>
 ```
