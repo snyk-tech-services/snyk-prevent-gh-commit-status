@@ -87,6 +87,7 @@ export SNYK_DEBUG=true
     <GH_ORG_NAME> 
     <GH_REPO_NAME> 
     <CIRCLE_SHA1>
+    <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
 ```
 
