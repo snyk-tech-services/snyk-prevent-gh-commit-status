@@ -11,14 +11,16 @@ beforeAll(() => {
     .post(/^(?!.*xyz).*$/)
     .reply(200, (uri) => {
       switch (uri) {
-        case '/api/v1/org/Playground/projects':
+        case '/api/v1/org/playground/projects':
           return fs.readFileSync(
             fixturesFolderPath + 'api-response-projects-all-projects.json',
           );
-        case '/api/v1/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786/issues':
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/issues':
           return fs.readFileSync(fixturesFolderPath + 'apitest-gomod.json');
-        case '/api/v1/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272787/issues':
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787/issues':
           return fs.readFileSync(fixturesFolderPath + 'apitest-gomod.json');
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issues':
+          return fs.readFileSync(fixturesFolderPath + 'api-response-goof.json');
         default:
       }
     });
@@ -32,14 +34,16 @@ beforeAll(() => {
       switch (uri) {
         case '/repos/123/123/statuses/123':
           return requestBody;
+        case '/repos/123/123/issues/123/comments':
+          return requestBody;
         default:
           throw new Error('unexpected status POSTing to Github');
       }
     });
 });
 
-describe('Testing behaviors', () => {
-  test('Is it working?', async () => {
+describe('Testing behaviors without issue', () => {
+  test('[snyk-delta module] Is it working?', async () => {
     process.argv = [
       '',
       '',
@@ -52,17 +56,20 @@ describe('Testing behaviors', () => {
     const response = await main();
     expect(response).toEqual([
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
       },
     ]);
   });
 
-  test('Is it working with displayTargetFile?', async () => {
+  test('[snyk-delta module] Is it working with displayTargetFile?', async () => {
     process.argv = [
       '',
       '',
@@ -76,17 +83,20 @@ describe('Testing behaviors', () => {
     const response = await main();
     expect(response).toEqual([
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
       },
     ]);
   });
 
-  test('Is it working with --all-projects?', async () => {
+  test('[snyk-delta module] Is it working with --all-projects?', async () => {
     process.argv = [
       '',
       '',
@@ -100,25 +110,31 @@ describe('Testing behaviors', () => {
     const response = await main();
     expect(response).toEqual([
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
       },
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272787',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787',
+        },
+        prComment: {},
       },
     ]);
   });
 
-  test('Is it working in debug?', async () => {
+  test('[snyk-delta module] Is it working in debug?', async () => {
     process.env.SNYK_DEBUG = 'true';
     process.argv = [
       '',
@@ -133,18 +149,21 @@ describe('Testing behaviors', () => {
     const response = await main();
     expect(response).toEqual([
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
       },
     ]);
     delete process.env.SNYK_DEBUG;
   });
 
-  test('Is it working with --all-projects and unmonitored projects?', async () => {
+  test('[snyk-delta module] Is it working with --all-projects and unmonitored projects?', async () => {
     process.argv = [
       '',
       '',
@@ -159,30 +178,42 @@ describe('Testing behaviors', () => {
     const response = await main();
     expect(response).toEqual([
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url: 'https://job123',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
       },
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url: 'https://job123',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787',
+        },
+        prComment: {},
       },
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url: 'https://job123',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272788',
+        },
+        prComment: {},
       },
     ]);
   });
 
-  test('Is it working with --all-projects and unmonitored projects without job link?', async () => {
+  test('[snyk-delta module] Is it working with --all-projects and unmonitored projects without job link?', async () => {
     process.argv = [
       '',
       '',
@@ -196,28 +227,104 @@ describe('Testing behaviors', () => {
     const response = await main();
     expect(response).toEqual([
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
       },
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272787',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787',
+        },
+        prComment: {},
       },
       {
-        context: 'Snyk Prevent (Playground - go.mod)',
-        description: 'No new issue found',
-        state: 'success',
-        // eslint-disable-next-line
-        target_url:
-          'https://app.snyk.io/org/Playground/project/09235fa4-c241-42c6-8c63-c053bd272788',
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272788',
+        },
+        prComment: {},
+      },
+    ]);
+  });
+});
+
+describe('Testing behaviors with issue(s)', () => {
+  test('[snyk-delta module] Is it working with 1 issue without PR number', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-goof-with-one-more-vuln.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    const response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+        },
+        prComment: {},
+      },
+    ]);
+  });
+
+  test('[snyk-delta module] Is it working with 1 issue with PR number', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-goof-with-one-more-vuln.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    const response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {
+          body: `## Security
+1 issue found 
+* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
+\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
+\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
+\t+ Fixable by upgrade: false=>@snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+`,
+        },
+        /* eslint-enable no-useless-escape */
       },
     ]);
   });
