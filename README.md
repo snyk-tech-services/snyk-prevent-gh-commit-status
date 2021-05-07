@@ -28,6 +28,7 @@ snyk-prevent-gh-commit-status-linux
  <GH_ORG_NAME> 
  <GH_REPO_NAME> 
  <GH_COMMIT_SHA1>
+ <GH_PR_NUMBER>
  <LINK_TO_CI_JOB - optional>
 ```
 ### Snyk CLI in bash
@@ -39,6 +40,7 @@ snyk-prevent-gh-commit-status-linux
     <GH_ORG_NAME> 
     <GH_REPO_NAME> 
     <CIRCLE_SHA1>
+    <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
 ```
 
@@ -51,6 +53,7 @@ snyk-prevent-gh-commit-status-linux
     <GH_ORG_NAME> 
     <GH_REPO_NAME> 
     <CIRCLE_SHA1>
+    <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
 ```
 
@@ -64,8 +67,11 @@ Example in CircleCI using an Orb for a Go Modules project [example PR](https://g
         monitor-on-build: false
         token-variable: SNYK_TOKEN
         additional-arguments: --json-file-output=snykTestResults.json
-    - run: ./snyk-prevent-gh-commit-status-linux ./snykTestResults.json ${GITHUB_TOKEN} ${CIRCLE_PROJECT_USERNAME} ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_SHA1} ${CIRCLE_BUILD_URL}
+    - run: ./snyk-prevent-gh-commit-status-linux ./snykTestResults.json ${GITHUB_TOKEN} ${CIRCLE_PROJECT_USERNAME} ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_SHA1} ${CIRCLE_PULL_REQUEST} ${CIRCLE_BUILD_URL}
 ```
+>   CIRCLE_PULL_REQUEST will be a randomly selected PR if you have more than one. Be careful selecting the value
+
+
 
 More CI examples soon
 
@@ -83,3 +89,5 @@ export SNYK_DEBUG=true
     <CIRCLE_SHA1>
     <LINK_TO_CI_JOB - optional>
 ```
+
+
