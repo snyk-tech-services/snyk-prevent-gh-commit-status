@@ -293,12 +293,12 @@ describe('Testing behaviors with issue(s)', () => {
     ]);
   });
 
-  test('[snyk-delta module] Is it working with 1 issue with PR number', async () => {
+  test('[snyk-delta module] Is it working with 2 issues with PR number', async () => {
     process.argv = [
       '',
       '',
       path.resolve(__dirname, '..') +
-        '/fixtures/snyktest-goof-with-one-more-vuln.json',
+        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
       '123',
       '123',
       '123',
@@ -324,6 +324,12 @@ describe('Testing behaviors with issue(s)', () => {
 \t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
 \t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
 \t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+## License
+1 issue found 
+  1/1: 
+      Artistic-2.0 license 
+      [Medium Severity]
+\t+ Via: goof@1.0.1 => npm@7.12.0
 `,
         },
         /* eslint-enable no-useless-escape */

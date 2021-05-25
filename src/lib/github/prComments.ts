@@ -94,7 +94,7 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
 
 
     newLicenseIssues.forEach((issue, index) => {
-      licenseLine = `  ${index + 1}/${newLicenseIssues.length}: 
+      licenseLine += `  ${index + 1}/${newLicenseIssues.length}: 
       ${issue.title} 
       [${_.capitalize(issue.severity)} Severity]\n`;
 
