@@ -323,7 +323,7 @@ describe('Testing behaviors with issue(s)', () => {
 * 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
 \t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
 \t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
-\t+ Fixable by upgrade: false=>@snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
 `,
         },
         /* eslint-enable no-useless-escape */
@@ -373,7 +373,7 @@ describe('Testing behaviors with issue(s)', () => {
 * 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
 \t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
 \t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
-\t+ Fixable by upgrade: false=>@snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
 `,
         },
         /* eslint-enable no-useless-escape */
