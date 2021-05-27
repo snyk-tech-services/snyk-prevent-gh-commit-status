@@ -68,6 +68,9 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
 
         if (vuln.isUpgradable) {
           const upgradePaths = vuln.upgradePath;
+          if (upgradePaths && !upgradePaths[0]) {
+            upgradePaths.shift();
+          }
           const filteredUpgradedPath = upgradePaths? upgradePaths.join('=>'):'';
           vulnerabilityLine += `\t+ Fixable by upgrade: ${filteredUpgradedPath}\n`;
         }
@@ -91,7 +94,7 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
 
 
     newLicenseIssues.forEach((issue, index) => {
-      licenseLine = `  ${index + 1}/${newLicenseIssues.length}: 
+      licenseLine += `  ${index + 1}/${newLicenseIssues.length}: 
       ${issue.title} 
       [${_.capitalize(issue.severity)} Severity]\n`;
 
