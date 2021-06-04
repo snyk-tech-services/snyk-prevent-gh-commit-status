@@ -92,7 +92,7 @@ const main = async () => {
             prComment: ghPrCommentsCreateResponse,
           });
         } catch (err) {
-          console.error(err);
+          console.error(err.message);
         }
       } else {
         throw new Error(`Unexpected error - undefined snyk delta result`);
