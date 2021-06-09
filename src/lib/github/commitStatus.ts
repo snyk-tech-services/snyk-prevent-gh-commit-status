@@ -46,11 +46,13 @@ export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjec
         responseType: 'json',
         headers: { ...requestHeaders },
       });
-  
+
+
       const ghResponse = await ghClient.post(
         `/repos/${ghDetails.orgName}/${ghDetails.repoName}/statuses/${ghDetails.commitSha}`,
         JSON.stringify(data),
       );
+
 
       return ghResponse.data as ghCommitStatus
 }

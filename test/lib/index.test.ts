@@ -38,6 +38,8 @@ beforeAll(() => {
           return requestBody;
         case '/repos/123/123/issues/123/comments':
           return requestBody;
+        case '/repos/123/123/issues/123/comments/1':
+          return requestBody;
         default:
           throw new Error('unexpected status POSTing to Github');
       }

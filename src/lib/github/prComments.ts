@@ -2,10 +2,12 @@ import { SnykDeltaOutput } from 'snyk-delta';
 import { ghDetails, ghPrCommentsStatus } from './types';
 import axios from 'axios';
 import * as _ from 'lodash';
+import { map } from 'lodash';
 
 export const createPrComment = async (
   snykDeltaResults: SnykDeltaOutput,
-  ghDetails: ghDetails,
+  ghDetails: ghDetails, 
+  keepHistory: boolean
 ): Promise<ghPrCommentsStatus> => {
   const data = {body: `${formatPRComment(snykDeltaResults)}`};
 
@@ -22,10 +24,35 @@ export const createPrComment = async (
     headers: { ...requestHeaders },
   });
 
-  const ghResponse = await ghClient.post(
-    `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`,
-    JSON.stringify(data),
+  let ghResponse;
+  let firstComment = false;
+  let commentUrl = '';
+
+  ghResponse = await ghClient.get(
+    `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`
   );
+
+  if (ghResponse.data.length === 0) {
+    firstComment = true
+  } else {
+    ghResponse.data.map((comments: any) => {
+      comments.body.includes('******* Vulnerabilities report of the')
+      commentUrl = comments.url
+    }) 
+  }
+  
+  if (keepHistory == true || firstComment == true)
+  {
+    ghResponse = await ghClient.post(
+      `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`,
+      JSON.stringify(data),
+  );
+  } else {
+    ghResponse = await ghClient.patch(
+      commentUrl,
+      JSON.stringify(data),
+    );
+  }
 
   return ghResponse.data as ghPrCommentsStatus
 };
@@ -39,10 +66,12 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
   let vulnerabilityLine = '';
   let licenseLine = '';
 
+  allIssuesToDisplay = `### ******* Vulnerabilities report of the  *******\n` 
+
   if (newVulns.length + newLicenseIssues.length > 1) {
-    allIssuesToDisplay = '#New Issues Introduced\n';
+    allIssuesToDisplay += '# New Issues Introduced!\n';
   } else {
-    allIssuesToDisplay = '#New Issue Introduced\n';
+    allIssuesToDisplay += '# New Issue Introduced!\n';
   }
 
   // New Vulnerability
@@ -104,7 +133,7 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
     });
   }
 
-  allIssuesToDisplay = vulnerabilityLine + licenseLine;
+  allIssuesToDisplay += vulnerabilityLine + licenseLine;
 
   return allIssuesToDisplay;
 };
