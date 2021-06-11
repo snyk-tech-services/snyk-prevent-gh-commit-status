@@ -30,6 +30,7 @@ snyk-prevent-gh-commit-status-linux
  <GH_COMMIT_SHA1>
  <GH_PR_NUMBER>
  <LINK_TO_CI_JOB - optional>
+ <keepHistory - optional - if set the tool will post a new comment at each run otherwise it will update the existing comment>
 ```
 ### Snyk CLI in bash
 ```
@@ -42,6 +43,7 @@ snyk-prevent-gh-commit-status-linux
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
+    <keepHistory - optional>
 ```
 
 ### Snyk CLI in bash using npx
@@ -55,6 +57,7 @@ snyk-prevent-gh-commit-status-linux
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
+    <keepHistory - optional>
 ```
 
 ### Circle CI
@@ -89,6 +92,7 @@ export SNYK_DEBUG=true
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
+    <keepHistory - optional>
 ```
 
 
