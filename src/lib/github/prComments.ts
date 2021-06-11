@@ -2,62 +2,8 @@ import { SnykDeltaOutput } from 'snyk-delta';
 import { ghDetails, ghPrCommentsStatus } from './types';
 import axios from 'axios';
 import * as _ from 'lodash';
-import { map } from 'lodash';
 
-export const createPrComment = async (
-  snykDeltaResults: SnykDeltaOutput,
-  ghDetails: ghDetails, 
-  keepHistory: boolean
-): Promise<ghPrCommentsStatus> => {
-  const data = {body: `${formatPRComment(snykDeltaResults)}`};
-
-  const requestHeaders: Object = {
-    'Content-Type': 'application/json',
-    Authorization: `token ${ghDetails.token}`,
-  };
-
-  const baseUrl = process.env.GH_API || 'https://api.github.com';
-
-  const ghClient = axios.create({
-    baseURL: baseUrl,
-    responseType: 'json',
-    headers: { ...requestHeaders },
-  });
-
-  let ghResponse;
-  let firstComment = false;
-  let commentUrl = '';
-
-  ghResponse = await ghClient.get(
-    `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`
-  );
-
-  if (ghResponse.data.length === 0) {
-    firstComment = true
-  } else {
-    ghResponse.data.map((comments: any) => {
-      comments.body.includes('******* Vulnerabilities report of the')
-      commentUrl = comments.url
-    }) 
-  }
-  
-  if (keepHistory == true || firstComment == true)
-  {
-    ghResponse = await ghClient.post(
-      `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`,
-      JSON.stringify(data),
-  );
-  } else {
-    ghResponse = await ghClient.patch(
-      commentUrl,
-      JSON.stringify(data),
-    );
-  }
-
-  return ghResponse.data as ghPrCommentsStatus
-};
-
-const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
+const formatPRComment = (snykDeltaResults: SnykDeltaOutput, commitNb: string): string => {
   const newVulns = snykDeltaResults.newVulns || [];
   const newLicenseIssues = snykDeltaResults.newLicenseIssues || [];
 
@@ -66,12 +12,12 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
   let vulnerabilityLine = '';
   let licenseLine = '';
 
-  allIssuesToDisplay = `### ******* Vulnerabilities report of the  *******\n` 
+  allIssuesToDisplay = `### ******* Vulnerabilities report for commit number ${commitNb} *******\n` 
 
   if (newVulns.length + newLicenseIssues.length > 1) {
-    allIssuesToDisplay += '# New Issues Introduced!\n';
+    allIssuesToDisplay += 'New Issues Introduced!\n';
   } else {
-    allIssuesToDisplay += '# New Issue Introduced!\n';
+    allIssuesToDisplay += 'New Issue Introduced!\n';
   }
 
   // New Vulnerability
@@ -86,7 +32,7 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
         vuln.title
       } [${_.capitalize(vuln.severity)} Severity]\n`;
 
-      let paths = vuln.from as Array<string>;
+      const paths = vuln.from as Array<string>;
 
       vulnerabilityLine += `\t+ Via:   ${paths.join(' => ')}\n`;
 
@@ -137,3 +83,61 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput): string => {
 
   return allIssuesToDisplay;
 };
+
+
+export const createPrComment = async (
+  snykDeltaResults: SnykDeltaOutput,
+  ghDetails: ghDetails, 
+  keepHistory: boolean
+): Promise<ghPrCommentsStatus> => {
+
+  const data = {body: `${formatPRComment(snykDeltaResults, (ghDetails.commitSha ? ghDetails.commitSha : ''))}`};
+
+  const requestHeaders: Record<string, any> = {
+    'Content-Type': 'application/json',
+    Authorization: `token ${ghDetails.token}`,
+  };
+
+  const baseUrl = process.env.GH_API || 'https://api.github.com';
+
+  const ghClient = axios.create({
+    baseURL: baseUrl,
+    responseType: 'json',
+    headers: { ...requestHeaders },
+  });
+
+  let ghResponse;
+  let firstComment = false;
+  let commentUrl = '';
+
+  ghResponse = await ghClient.get(
+    `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`
+  );
+
+  if (ghResponse.data.length === 0) {
+    firstComment = true
+  } else {
+    ghResponse.data.map((comments: any) => {
+      if (comments.body.includes('******* Vulnerabilities report for commit')) 
+      {
+        commentUrl = comments.url
+      }
+    }) 
+  }
+  
+  if (keepHistory == true || firstComment == true)
+  {
+    ghResponse = await ghClient.post(
+      `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`,
+      JSON.stringify(data),
+  );
+  } else {
+    ghResponse = await ghClient.patch(
+      commentUrl,
+      JSON.stringify(data),
+    );
+  }
+
+  return ghResponse.data as ghPrCommentsStatus
+};
+

@@ -28,20 +28,49 @@ beforeAll(() => {
     });
 });
 
+const responseAfterComment = [
+  {
+    id: 1,
+    body: '### ******* Vulnerabilities report for commit number 123 *******',
+    url: 'https://api.github.com/repos/123/123/issues/123/comments/1',
+  },
+];
+const responseBeforeComment: unknown[] = [];
+let responseForComment = responseBeforeComment;
+
 beforeAll(() => {
   return nock('https://api.github.com')
     .persist()
+    .get(/^(?!.*xyz).*$/)
+    .reply(200, (uri) => {
+      switch (uri) {
+        case '/repos/123/123/issues/123/comments':
+          return responseForComment;
+        default:
+          throw new Error('unexpected status GETing to Github');
+      }
+    })
     .post(/^(?!.*xyz).*$/)
     .reply(200, (uri, requestBody) => {
       switch (uri) {
         case '/repos/123/123/statuses/123':
           return requestBody;
         case '/repos/123/123/issues/123/comments':
+          responseForComment = responseAfterComment;
           return requestBody;
         case '/repos/123/123/issues/123/comments/1':
           return requestBody;
         default:
           throw new Error('unexpected status POSTing to Github');
+      }
+    })
+    .patch(/^(?!.*xyz).*$/)
+    .reply(200, (uri, requestBody) => {
+      switch (uri) {
+        case '/repos/123/123/issues/123/comments/1':
+          return requestBody;
+        default:
+          throw new Error('unexpected status PATCHing to Github');
       }
     });
 });
@@ -110,6 +139,7 @@ describe('Testing behaviors without issue', () => {
       '123',
       '123',
       '123',
+      '',
     ];
     const response = await main();
     expect(response).toEqual([
@@ -149,6 +179,7 @@ describe('Testing behaviors without issue', () => {
       '123',
       '123',
       '',
+      'keepHistory',
     ];
     const response = await main();
     expect(response).toEqual([
@@ -178,6 +209,7 @@ describe('Testing behaviors without issue', () => {
       '123',
       '123',
       'https://job123',
+      'keepHistory',
     ];
     const response = await main();
     expect(response).toEqual([
@@ -320,7 +352,9 @@ describe('Testing behaviors with issue(s)', () => {
         },
         /* eslint-disable no-useless-escape */
         prComment: {
-          body: `## Security
+          body: `### ******* Vulnerabilities report for commit number 123 *******
+New Issues Introduced!
+## Security
 1 issue found 
 * 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
 \t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
@@ -376,12 +410,87 @@ describe('Testing behaviors with issue(s)', () => {
         },
         /* eslint-disable no-useless-escape */
         prComment: {
-          body: `## Security
+          body: `### ******* Vulnerabilities report for commit number 123 *******
+New Issue Introduced!
+## Security
 1 issue found 
 * 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
 \t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
 \t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
 \t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+`,
+        },
+        /* eslint-enable no-useless-escape */
+      },
+    ]);
+  });
+
+  test('[snyk-delta module] Is it working with 1 issue without PR number and update comment', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-goof-with-one-more-vuln.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '',
+    ];
+    let response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+        },
+        prComment: {},
+      },
+    ]);
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      '',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {
+          body: `### ******* Vulnerabilities report for commit number 123 *******
+New Issues Introduced!
+## Security
+1 issue found 
+* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
+\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
+\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
+\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+## License
+1 issue found 
+  1/1: 
+      Artistic-2.0 license 
+      [Medium Severity]
+\t+ Via: goof@1.0.1 => npm@7.12.0
 `,
         },
         /* eslint-enable no-useless-escape */
