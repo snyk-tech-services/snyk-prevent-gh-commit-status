@@ -14,13 +14,20 @@ const main = async () => {
       console.log('error missing argument');
       process.exit(2);
     }
+
     const jsonResultsFilePath = process.argv.slice(2)[0];
     const ghToken = process.argv.slice(2)[1];
     const ghOrg = process.argv.slice(2)[2];
     const ghRepo = process.argv.slice(2)[3];
     const ghSha = process.argv.slice(2)[4];
     const ghPRNumber = process.argv.slice(2)[5] || '';
-    const detailsLink = process.argv.slice(2)[6] || '';
+    let keepHistory = false;
+    let detailsLink = '';
+    if (process.argv.slice(2)[6] == 'keepHistory' || process.argv.slice(2)[7] == 'keepHistory') { 
+      keepHistory = true 
+    } else { 
+      detailsLink = process.argv.slice(2)[6] || ''
+    }
 
     const debug = process.env.SNYK_DEBUG ? true : false; // process.argv.slice(2)[6] == 'debug' ? true : false;
     const jsonResultsFromSnykTest = fs
@@ -75,7 +82,7 @@ const main = async () => {
           const ghCommitStatusUpdateResponse = await sendCommitStatus(
             snykDeltaResults.result,
             snykProjectDetails,
-            githubDetails,
+            githubDetails
           );
 
           let shouldCommentPr = false;
@@ -84,7 +91,7 @@ const main = async () => {
           }
 
           const ghPrCommentsCreateResponse = shouldCommentPr
-            ? await createPrComment(snykDeltaResults, githubDetails)
+            ? await createPrComment(snykDeltaResults, githubDetails, keepHistory)
             : {};
 
           responseArray.push({
