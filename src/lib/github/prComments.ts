@@ -107,20 +107,19 @@ export const createPrComment = async (
   });
 
   let ghResponse;
-  let firstComment = false;
-  let commentUrl = '';
+  let firstComment = true;
+  let commentUrl = `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`;
 
   ghResponse = await ghClient.get(
-    `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`
+    commentUrl
   );
 
-  if (ghResponse.data.length === 0) {
-    firstComment = true
-  } else {
+  if ((ghResponse.data.length != 0) && !keepHistory) {
     ghResponse.data.map((comments: any) => {
       if (comments.body.includes('******* Vulnerabilities report for commit')) 
       {
         commentUrl = comments.url
+        firstComment = false
       }
     }) 
   }
@@ -128,14 +127,12 @@ export const createPrComment = async (
   if (keepHistory == true || firstComment == true)
   {
     ghResponse = await ghClient.post(
-      `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`,
-      JSON.stringify(data),
-  );
+      commentUrl,
+      JSON.stringify(data),);
   } else {
     ghResponse = await ghClient.patch(
       commentUrl,
-      JSON.stringify(data),
-    );
+      JSON.stringify(data),);
   }
 
   return ghResponse.data as ghPrCommentsStatus
