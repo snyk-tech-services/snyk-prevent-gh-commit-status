@@ -80,7 +80,7 @@ const main = async () => {
       if (typeof snykDeltaResults.result !== 'undefined') {
         try {
           const ghCommitStatusUpdateResponse = await sendCommitStatus(
-            snykDeltaResults.result,
+            (snykDeltaResults.passIfNoBaseline? 0 : snykDeltaResults.result),
             snykProjectDetails,
             githubDetails
           );
