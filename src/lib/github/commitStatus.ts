@@ -20,12 +20,6 @@ export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjec
       data.target_url = `https://app.snyk.io/org/${snykProjectDetails.orgName}/project/${snykProjectDetails.projectID}`
     }
 
-    // Overwrite snykDeltaBinaryResult because setPassIfNoBaselineFlag is true
-    if (issueFoundNoBaseline === true)
-    {
-      snykDeltaBinaryResult = 0;
-    }
-
     switch (snykDeltaBinaryResult) {
         case 0:
           data.state = ghCommitStatusState.success;
