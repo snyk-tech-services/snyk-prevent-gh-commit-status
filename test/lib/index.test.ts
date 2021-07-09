@@ -567,4 +567,49 @@ New Issues Introduced!
       },
     ]);
   });
+
+  test('[snyk-delta module] Is it working unmonitored project with vulnerabilities and option setPassIfNoBaselineFlag at true', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-goof-with-one-more-vuln-unmonitored.json',
+      '124',
+      '124',
+      '124',
+      '124',
+      '124',
+      'setPassIfNoBaselineFlag',
+    ];
+    const response = await main();
+
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description:
+            'Skipping check - New issue(s) found for unmonitored project',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url: 'https://app.snyk.io/org/playground/projects',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {
+          body: `### ******* INFORMATION ONLY *******
+####  project is unmonitored (no baseline) ####
+see https://github.com/snyk-tech-services/snyk-prevent-gh-commit-status#additional-option---debug for more information
+### ******* Vulnerabilities report for commit number 124 *******
+New Issue Introduced!
+## Security
+1 issue found 
+* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
+\t+ Via:   goof@0.0.3 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
+\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
+\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+`,
+        },
+        /* eslint-enable no-useless-escape */
+      },
+    ]);
+  });
 });

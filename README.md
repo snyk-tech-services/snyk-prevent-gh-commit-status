@@ -93,6 +93,10 @@ export SNYK_DEBUG=true
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
     <keepHistory - optional>
+    <setPassIfNoBaselineFlag - optional>
 ```
 
+#### No baseline
+In case of an unmonitored project, it is possible to force the snyk-delta result so snyk-prevent-gh-commit-status will not fail.
+If some vulnerabilities are found comment listing the vulnerabilities will still be the post on the PR.
 

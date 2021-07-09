@@ -12,7 +12,14 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput, commitNb: string): s
   let vulnerabilityLine = '';
   let licenseLine = '';
 
-  allIssuesToDisplay = `### ******* Vulnerabilities report for commit number ${commitNb} *******\n` 
+  if (snykDeltaResults.passIfNoBaseline)
+  {
+    allIssuesToDisplay = `### ******* INFORMATION ONLY *******\n`
+    allIssuesToDisplay += `####  project is unmonitored (no baseline) ####\n`
+    allIssuesToDisplay += `see https://github.com/snyk-tech-services/snyk-prevent-gh-commit-status#additional-option---debug for more information\n`
+  }
+
+  allIssuesToDisplay += `### ******* Vulnerabilities report for commit number ${commitNb} *******\n` 
 
   if (newVulns.length + newLicenseIssues.length > 1) {
     allIssuesToDisplay += 'New Issues Introduced!\n';
