@@ -22,12 +22,23 @@ const main = async () => {
     const ghSha = process.argv.slice(2)[4];
     const ghPRNumber = process.argv.slice(2)[5] || '';
     let keepHistory = false;
+    let setPassIfNoBaselineFlag = false;
     let detailsLink = '';
-    if (process.argv.slice(2)[6] == 'keepHistory' || process.argv.slice(2)[7] == 'keepHistory') { 
-      keepHistory = true 
-    } else { 
-      detailsLink = process.argv.slice(2)[6] || ''
-    }
+
+    const options = process.argv.slice(8)
+
+    options.forEach(option => {
+      if (option === 'keepHistory')
+      {
+        keepHistory = true
+      } else if (option === 'setPassIfNoBaselineFlag')
+      {
+        setPassIfNoBaselineFlag = true
+      } else
+      {
+        detailsLink = option || ''
+      }
+    })
 
     const debug = process.env.SNYK_DEBUG ? true : false; // process.argv.slice(2)[6] == 'debug' ? true : false;
     const jsonResultsFromSnykTest = fs
@@ -52,6 +63,7 @@ const main = async () => {
       const snykDeltaResults = (await getDelta(
         currentResults,
         debug,
+        setPassIfNoBaselineFlag,
       )) as SnykDeltaOutput;
       
       const parsedCurrentResults = JSON.parse(currentResults);
@@ -79,18 +91,28 @@ const main = async () => {
 
       if (typeof snykDeltaResults.result !== 'undefined') {
         try {
-          const ghCommitStatusUpdateResponse = await sendCommitStatus(
-            (snykDeltaResults.passIfNoBaseline? 0 : snykDeltaResults.result),
-            snykProjectDetails,
-            githubDetails
-          );
-
           let shouldCommentPr = false;
+          let noBaseline = false;
+          
           if (snykDeltaResults.result > 0 && ghPRNumber) {
             shouldCommentPr = true;
           }
 
-          const ghPrCommentsCreateResponse = shouldCommentPr
+          if((snykDeltaResults.passIfNoBaseline && snykDeltaResults.noBaseline) === true && snykDeltaResults.result === 0
+            && (snykDeltaResults.newVulns || snykDeltaResults.newLicenseIssues))
+          {
+            shouldCommentPr = true;
+            noBaseline = true
+          }
+
+          const ghCommitStatusUpdateResponse = await sendCommitStatus(
+            snykDeltaResults.result,
+            snykProjectDetails,
+            githubDetails, 
+            noBaseline,
+          );
+
+          const ghPrCommentsCreateResponse = shouldCommentPr 
             ? await createPrComment(snykDeltaResults, githubDetails, keepHistory)
             : {};
 

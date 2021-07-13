@@ -5,7 +5,7 @@ import { ghDetails, ghCommitStatusState, ghCommitStatus } from "./types"
   
   
 
-export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjectDetails: snykProjectDetails, ghDetails: ghDetails ): Promise<ghCommitStatus> => {
+export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjectDetails: snykProjectDetails, ghDetails: ghDetails, issueFoundNoBaseline: boolean ): Promise<ghCommitStatus> => {
 
     let data: ghCommitStatus = {
         state: ghCommitStatusState.pending,
@@ -20,11 +20,14 @@ export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjec
       data.target_url = `https://app.snyk.io/org/${snykProjectDetails.orgName}/project/${snykProjectDetails.projectID}`
     }
 
-
     switch (snykDeltaBinaryResult) {
         case 0:
           data.state = ghCommitStatusState.success;
           data.description = 'No new issue found';
+          if (issueFoundNoBaseline)
+          {
+            data.description = 'Passing check as project is unmonitored - For information: issue(s) found for unmonitored project';
+          } 
           break;
         case 1:
           data.state = ghCommitStatusState.failure;
