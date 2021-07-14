@@ -26,7 +26,7 @@ export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjec
           data.description = 'No new issue found';
           if (issueFoundNoBaseline)
           {
-            data.description = 'Skipping check - New issue(s) found for unmonitored project';
+            data.description = 'Passing check as project is unmonitored - For information: issue(s) found for unmonitored project';
           } 
           break;
         case 1:

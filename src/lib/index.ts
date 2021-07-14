@@ -98,7 +98,7 @@ const main = async () => {
             shouldCommentPr = true;
           }
 
-          if(snykDeltaResults.passIfNoBaseline === true 
+          if((snykDeltaResults.passIfNoBaseline && snykDeltaResults.noBaseline) === true && snykDeltaResults.result === 0
             && (snykDeltaResults.newVulns || snykDeltaResults.newLicenseIssues))
           {
             shouldCommentPr = true;
@@ -112,7 +112,7 @@ const main = async () => {
             noBaseline,
           );
 
-          const ghPrCommentsCreateResponse = shouldCommentPr
+          const ghPrCommentsCreateResponse = shouldCommentPr 
             ? await createPrComment(snykDeltaResults, githubDetails, keepHistory)
             : {};
 
