@@ -320,6 +320,34 @@ describe('Testing behaviors without issue', () => {
       },
     ]);
   });
+
+  test('[snyk-delta module] Is it working with unmonitored project and no vuln?', async () => {
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-gomod-unmonitored.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      'setPassIfNoBaselineFlag',
+    ];
+    const response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url: 'https://app.snyk.io/org/playground/projects',
+        },
+        prComment: {},
+      },
+    ]);
+  });
 });
 
 describe('Testing behaviors with issue(s)', () => {
