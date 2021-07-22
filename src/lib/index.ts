@@ -98,11 +98,14 @@ const main = async () => {
             shouldCommentPr = true;
           }
 
-          if((snykDeltaResults.passIfNoBaseline && snykDeltaResults.noBaseline) === true && snykDeltaResults.result === 0
-            && (snykDeltaResults.newVulns || snykDeltaResults.newLicenseIssues))
+          if((snykDeltaResults.passIfNoBaseline && snykDeltaResults.noBaseline) === true && snykDeltaResults.result === 0)
           {
-            shouldCommentPr = true;
-            noBaseline = true
+            if (((snykDeltaResults.newVulns) && (snykDeltaResults.newVulns.length > 0)) || 
+            ((snykDeltaResults.newLicenseIssues) && (snykDeltaResults.newLicenseIssues.length > 0))) 
+            {
+              shouldCommentPr = true;
+              noBaseline = true
+            }
           }
 
           const ghCommitStatusUpdateResponse = await sendCommitStatus(
