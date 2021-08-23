@@ -2,6 +2,8 @@ import { SnykDeltaOutput } from 'snyk-delta';
 import { ghDetails, ghPrCommentsStatus } from './types';
 import axios from 'axios';
 import * as _ from 'lodash';
+import * as debugLib from 'debug';
+const debug = debugLib('snyk:generate-data-script');
 
 const formatPRComment = (snykDeltaResults: SnykDeltaOutput, commitNb: string): string => {
   const newVulns = snykDeltaResults.newVulns || [];
@@ -80,7 +82,7 @@ const formatPRComment = (snykDeltaResults: SnykDeltaOutput, commitNb: string): s
       ${issue.title} 
       [${_.capitalize(issue.severity)} Severity]\n`;
 
-      let paths = issue.from as Array<string>;
+      const paths = issue.from as Array<string>;
 
       licenseLine += `\t+ Via: ${paths.join(' => ')}\n`;
     });
@@ -130,6 +132,9 @@ export const createPrComment = async (
       }
     }) 
   }
+
+  debug(`Creating PR comment with url: ${commentUrl} keepHistory: ${keepHistory}`)
+  debug(`first Snyk comment : ${firstComment}`)
   
   if (keepHistory == true || firstComment == true)
   {
@@ -145,3 +150,82 @@ export const createPrComment = async (
   return ghResponse.data as ghPrCommentsStatus
 };
 
+export const deletePrComment = async (
+  ghDetails: ghDetails
+) : Promise<void> => {
+
+  const baseUrl = process.env.GH_API || 'https://api.github.com';
+  const commentUrl = `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`;
+  let ghResponse;
+  const commentUrlList: string[] = []
+
+  const requestHeaders: Record<string, any> = {
+    'Content-Type': 'application/json',
+    Authorization: `token ${ghDetails.token}`,
+  };
+
+  const ghClient = axios.create({
+    baseURL: baseUrl,
+    responseType: 'json',
+    headers: { ...requestHeaders },
+  });
+
+  ghResponse = await ghClient.get(
+    commentUrl
+  );
+
+  // Need to get only the snyk comments
+  if ((ghResponse.data.length != 0)) {
+    ghResponse.data.map((comments: any) => {
+      if (comments.body.includes('******* Vulnerabilities report for commit')) 
+      {
+        commentUrlList.push(comments.url)
+      }
+    }) 
+  }
+
+  // Delete them
+  commentUrlList.forEach(async url => {
+    debug(`Delete comment at url: ${url}`)
+    ghResponse = await ghClient.delete(
+      url);
+  });
+
+  return 
+}
+
+export const prCommentExist = async (
+  ghDetails: ghDetails
+) : Promise<boolean> => {
+
+  debug('Checking if there are some snyk comment on the PR')
+
+  const baseUrl = process.env.GH_API || 'https://api.github.com';
+  const commentUrl = `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`;
+
+  const requestHeaders: Record<string, any> = {
+    'Content-Type': 'application/json',
+    Authorization: `token ${ghDetails.token}`,
+  };
+
+  const ghClient = axios.create({
+    baseURL: baseUrl,
+    responseType: 'json',
+    headers: { ...requestHeaders },
+  });
+
+  const ghResponse = await ghClient.get(
+    commentUrl
+  );
+
+  // Need to get only the snyk comments
+  if ((ghResponse.data.length != 0)) {
+    ghResponse.data.map((comments: any) => {
+      if (comments.body.includes('******* Vulnerabilities report for commit')) 
+      {
+        return true
+      }
+    }) 
+  }
+  return false
+}

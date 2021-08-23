@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-
 import { getDelta, SnykDeltaOutput } from 'snyk-delta';
 import { sendCommitStatus } from './github/commitStatus';
-import { createPrComment } from './github/prComments';
+import { createPrComment, deletePrComment, prCommentExist } from './github/prComments';
 import { ghActivity, ghDetails } from './github/types';
 import { snykProjectDetails } from './types';
 import * as fs from 'fs';
+import * as debugLib from 'debug';
+const debug = debugLib('snyk:generate-data-script'); 
 
 const main = async () => {
+
   try {
     if (process.argv.length < 7) {
       console.log('error missing argument');
@@ -40,7 +42,9 @@ const main = async () => {
       }
     })
 
-    const debug = process.env.SNYK_DEBUG ? true : false; // process.argv.slice(2)[6] == 'debug' ? true : false;
+    debug(`running snyk-prevent-gh-commit-status with org: ${ghOrg} repo: ${ghRepo} commit: ${ghSha} PRNumber: ${ghPRNumber} keepHistory: ${keepHistory} setPassIfNoBaselineFlag: ${setPassIfNoBaselineFlag} detailsLink: ${detailsLink}`)
+
+    const snykDeltaDebug = process.env.SNYK_DEBUG ? true : false; // process.argv.slice(2)[6] == 'debug' ? true : false;
     const jsonResultsFromSnykTest = fs
       .readFileSync(jsonResultsFilePath)
       .toString();
@@ -60,9 +64,10 @@ const main = async () => {
 
     for (let i = 0; i < jsonResultsArray.length; i++) {
       const currentResults = jsonResultsArray[i];
+      debug(`Running snyk delta for ${i}`)
       const snykDeltaResults = (await getDelta(
         currentResults,
-        debug,
+        snykDeltaDebug,
         setPassIfNoBaselineFlag,
       )) as SnykDeltaOutput;
       
@@ -111,6 +116,16 @@ const main = async () => {
             githubDetails, 
             noBaseline,
           );
+
+          if (ghPRNumber)
+          {
+            if (snykDeltaResults.result === 0 && !keepHistory && (await prCommentExist(githubDetails) === false)) {
+              debug('Deleting comments on PR')
+              await deletePrComment(githubDetails)
+            }
+          }
+
+          debug(`shouldCommentPr = ${shouldCommentPr}`)
 
           const ghPrCommentsCreateResponse = shouldCommentPr 
             ? await createPrComment(snykDeltaResults, githubDetails, keepHistory)
