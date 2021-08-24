@@ -193,39 +193,3 @@ export const deletePrComment = async (
 
   return 
 }
-
-export const prCommentExist = async (
-  ghDetails: ghDetails
-) : Promise<boolean> => {
-
-  debug('Checking if there are some snyk comment on the PR')
-
-  const baseUrl = process.env.GH_API || 'https://api.github.com';
-  const commentUrl = `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`;
-
-  const requestHeaders: Record<string, any> = {
-    'Content-Type': 'application/json',
-    Authorization: `token ${ghDetails.token}`,
-  };
-
-  const ghClient = axios.create({
-    baseURL: baseUrl,
-    responseType: 'json',
-    headers: { ...requestHeaders },
-  });
-
-  const ghResponse = await ghClient.get(
-    commentUrl
-  );
-
-  // Need to get only the snyk comments
-  if ((ghResponse.data.length != 0)) {
-    ghResponse.data.map((comments: any) => {
-      if (comments.body.includes('******* Vulnerabilities report for commit')) 
-      {
-        return true
-      }
-    }) 
-  }
-  return false
-}

@@ -2,7 +2,7 @@
 import 'source-map-support/register';
 import { getDelta, SnykDeltaOutput } from 'snyk-delta';
 import { sendCommitStatus } from './github/commitStatus';
-import { createPrComment, deletePrComment, prCommentExist } from './github/prComments';
+import { createPrComment, deletePrComment } from './github/prComments';
 import { ghActivity, ghDetails } from './github/types';
 import { snykProjectDetails } from './types';
 import * as fs from 'fs';
@@ -122,7 +122,7 @@ const main = async () => {
 
           if (ghPRNumber)
           {
-            if (snykDeltaResults.result === 0 && !keepHistory && (await prCommentExist(githubDetails) === false)) {
+            if (snykDeltaResults.result === 0 && !keepHistory) {
               debug('Deleting comments on PR')
               await deletePrComment(githubDetails)
             }
