@@ -99,7 +99,7 @@ const main = async () => {
           let shouldCommentPr = false;
           let noBaseline = false;
           
-          if (snykDeltaResults.result > 0 && ghPRNumber) {
+          if (snykDeltaResults.result === 1 && ghPRNumber) {
             shouldCommentPr = true;
           }
 
