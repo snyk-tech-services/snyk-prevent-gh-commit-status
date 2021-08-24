@@ -2,6 +2,7 @@ import * as nock from 'nock';
 import * as fs from 'fs';
 import { main } from '../../src/lib/index';
 import * as path from 'path';
+import axios from 'axios';
 
 const fixturesFolderPath = path.resolve(__dirname, '..') + '/fixtures/';
 
@@ -94,6 +95,16 @@ beforeAll(() => {
           return requestBody;
         default:
           throw new Error('unexpected status PATCHing to Github');
+      }
+    })
+    .delete(/^(?!.*xyz).*$/)
+    .reply(200, (uri) => {
+      switch (uri) {
+        case '/repos/123/123/issues/123/comments/1':
+          responseForComment = responseBeforeComment;
+          return;
+        default:
+          throw new Error('unexpected status DELETing to Github');
       }
     });
 });
@@ -711,6 +722,195 @@ New Issue Introduced!
 `,
         },
         /* eslint-enable no-useless-escape */
+      },
+    ]);
+  });
+
+  test('[snyk-delta module] Is it working with remove PR comment and PR number', async () => {
+    let response;
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      '',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {
+          body: `### ******* Vulnerabilities report for commit number 123 *******
+New Issues Introduced!
+## Security
+1 issue found 
+* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
+\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
+\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
+\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+## License
+1 issue found 
+  1/1: 
+      Artistic-2.0 license 
+      [Medium Severity]
+\t+ Via: goof@1.0.1 => npm@7.12.0
+`,
+        },
+        /* eslint-enable no-useless-escape */
+      },
+    ]);
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') + '/fixtures/snyktest-gomod.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      '',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
+      },
+    ]);
+
+    const requestHeaders: Record<string, any> = {
+      'Content-Type': 'application/json',
+      Authorization: `token 123`,
+    };
+
+    const ghClient = axios.create({
+      baseURL: 'https://api.github.com',
+      responseType: 'json',
+      headers: { ...requestHeaders },
+    });
+
+    const commentUrl = `/repos/123/123/issues/123/comments`;
+
+    const ghResponse = await ghClient.get(commentUrl);
+
+    expect(ghResponse.data).toEqual([]);
+  });
+
+  test('[snyk-delta module] Is it working with remove PR comment without PR number', async () => {
+    let response;
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      '',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {
+          body: `### ******* Vulnerabilities report for commit number 123 *******
+New Issues Introduced!
+## Security
+1 issue found 
+* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
+\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
+\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
+\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+## License
+1 issue found 
+  1/1: 
+      Artistic-2.0 license 
+      [Medium Severity]
+\t+ Via: goof@1.0.1 => npm@7.12.0
+`,
+        },
+        /* eslint-enable no-useless-escape */
+      },
+    ]);
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') + '/fixtures/snyktest-gomod.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
+      },
+    ]);
+
+    const requestHeaders: Record<string, any> = {
+      'Content-Type': 'application/json',
+      Authorization: `token 123`,
+    };
+
+    const ghClient = axios.create({
+      baseURL: 'https://api.github.com',
+      responseType: 'json',
+      headers: { ...requestHeaders },
+    });
+
+    const commentUrl = `/repos/123/123/issues/123/comments`;
+
+    const ghResponse = await ghClient.get(commentUrl);
+
+    expect(ghResponse.data).toEqual([
+      {
+        id: 1,
+        body:
+          '### ******* Vulnerabilities report for commit number 123 *******',
+        url: 'https://api.github.com/repos/123/123/issues/123/comments/1',
       },
     ]);
   });
