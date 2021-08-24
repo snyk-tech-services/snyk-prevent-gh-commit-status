@@ -1,18 +1,20 @@
 import axios from 'axios';
 import { snykProjectDetails } from "../types";
 import { ghDetails, ghCommitStatusState, ghCommitStatus } from "./types"
-
-  
+import * as debugLib from 'debug';
+const debug = debugLib('snyk:generate-data-script');
   
 
 export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjectDetails: snykProjectDetails, ghDetails: ghDetails, issueFoundNoBaseline: boolean ): Promise<ghCommitStatus> => {
-
-    let data: ghCommitStatus = {
+    
+    const data: ghCommitStatus = {
         state: ghCommitStatusState.pending,
         target_url: `https://app.snyk.io/org/${snykProjectDetails.orgName}/projects`,
         description: 'Could not find project ID. Verify org tested against',
         context: `Snyk Prevent (${snykProjectDetails.orgName} - ${snykProjectDetails.targetFile})`,
     }
+
+    debug(`Send commit status for ${data.target_url} with status: ${data.state}`)
     
     if(snykProjectDetails.detailsLink != ''){
       data.target_url = snykProjectDetails.detailsLink

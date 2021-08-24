@@ -81,7 +81,7 @@ More CI examples soon
 ### Point to GHE
 export GH_API='https://ghe-hostname/apiendpoint'
 
-#### Additional option - Debug
+#### Additional option to enable snykDelta Debug
 ```
 export SNYK_DEBUG=true
 ./snyk-prevent-gh-commit-status-linux 
@@ -100,3 +100,33 @@ export SNYK_DEBUG=true
 In case of an unmonitored project, it is possible to force the snyk-delta result so snyk-prevent-gh-commit-status will not fail.
 If some vulnerabilities are found comment listing the vulnerabilities will still be the post on the PR.
 
+#### Debug
+use DEBUG=snyk* to enable snyk-prevent-gh-commit-status
+```
+DEBUG=snyk* ./snyk-prevent-gh-commit-status-linux 
+    ./snykTestResults.json 
+    <GITHUB_TOKEN> 
+    <GH_ORG_NAME> 
+    <GH_REPO_NAME> 
+    <CIRCLE_SHA1>
+    <GH_PR_NUMBER>
+    <LINK_TO_CI_JOB - optional>
+    <keepHistory - optional>
+    <setPassIfNoBaselineFlag - optional>
+```
+
+or to enable both snykDelta and snyk-prevent-gh-commit-status debug
+
+```
+export SNYK_DEBUG=true
+DEBUG=snyk* ./snyk-prevent-gh-commit-status-linux 
+    ./snykTestResults.json 
+    <GITHUB_TOKEN> 
+    <GH_ORG_NAME> 
+    <GH_REPO_NAME> 
+    <CIRCLE_SHA1>
+    <GH_PR_NUMBER>
+    <LINK_TO_CI_JOB - optional>
+    <keepHistory - optional>
+    <setPassIfNoBaselineFlag - optional>
+```
