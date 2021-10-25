@@ -16,14 +16,67 @@ beforeAll(() => {
           return fs.readFileSync(
             fixturesFolderPath + 'api-response-projects-all-projects.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/issues':
-          return fs.readFileSync(fixturesFolderPath + 'apitest-gomod.json');
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787/issues':
-          return fs.readFileSync(fixturesFolderPath + 'apitest-gomod.json');
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issues':
-          return fs.readFileSync(fixturesFolderPath + 'api-response-goof.json');
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272790/issues':
-          return fs.readFileSync(fixturesFolderPath + 'api-response-goof.json');
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/aggregated-issues':
+          return fs.readFileSync(
+            fixturesFolderPath + 'apitest-gomod-aggregated.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/dep-graph':
+          return fs.readFileSync(
+            fixturesFolderPath + 'goof-depgraph-from-api.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787/aggregated-issues':
+          return fs.readFileSync(
+            fixturesFolderPath + 'apitest-gomod-aggregated.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/aggregated-issues':
+          return fs.readFileSync(
+            fixturesFolderPath +
+              '/api-response/test-goof-aggregated-one-vuln-one-license.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272790/aggregated-issues':
+          return fs.readFileSync(
+            fixturesFolderPath +
+              '/api-response/test-goof-aggregated-one-vuln-one-license.json',
+          );
+        default:
+      }
+    })
+    .get(/^(?!.*xyz).*$/)
+    .reply(200, (uri) => {
+      switch (uri) {
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/dep-graph':
+          return fs.readFileSync(
+            fixturesFolderPath + 'goof-depgraph-from-api.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787/dep-graph':
+          return fs.readFileSync(
+            fixturesFolderPath + 'goof-depgraph-from-api.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272790/dep-graph':
+          return fs.readFileSync(
+            fixturesFolderPath + 'goof-depgraph-from-api.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/dep-graph':
+          return fs.readFileSync(
+            fixturesFolderPath + 'goof-depgraph-from-api.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/snyk:lic:npm:goof:GPL-2.0/paths?perPage=100&page=1':
+          return fs.readFileSync(
+            fixturesFolderPath + 'snyk-lic-npm-goof-GPL-2-0-issue-paths.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-PACRESOLVER-1564857/paths?perPage=100&page=1':
+          return fs.readFileSync(
+            fixturesFolderPath + 'SNYK-JS-PACRESOLVER-1564857-issue-paths.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-DOTPROP-543489/paths?perPage=100&page=1':
+          return fs.readFileSync(
+            fixturesFolderPath +
+              'SNYK-JS-DOTPROP-543489-issue-paths-page1.json',
+          );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-ACORN-559469/paths?perPage=100&page=1':
+          return fs.readFileSync(
+            fixturesFolderPath + 'SNYK-JS-ACORN-559469-issue-paths.json',
+          );
         default:
       }
     });
@@ -394,7 +447,7 @@ describe('Testing behaviors with issue(s)', () => {
       '',
       '',
       path.resolve(__dirname, '..') +
-        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+        '/fixtures/snykTestOutput/test-goof-two-vuln-two-license.json',
       '123',
       '123',
       '123',
@@ -409,8 +462,7 @@ describe('Testing behaviors with issue(s)', () => {
           description: 'New issue(s) found',
           state: 'failure',
           // eslint-disable-next-line
-          target_url:
-            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+          target_url: 'https://app.snyk.io/org/playground/projects',
         },
         /* eslint-disable no-useless-escape */
         prComment: {
@@ -418,10 +470,10 @@ describe('Testing behaviors with issue(s)', () => {
 New Issues Introduced!
 ## Security
 1 issue found 
-* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
-\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
-\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
-\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+* 1/1: Prototype Pollution [Medium Severity]
+\t+ Via:   goof@0.0.3 => snyk@1.228.3 => configstore@3.1.2 => dot-prop@4.2.0
+\t+ Fixed in: dot-prop, 5.1.1
+\t+ Fixable by upgrade: snyk@1.290.1
 ## License
 1 issue found 
   1/1: 
@@ -518,7 +570,7 @@ New Issue Introduced!
       '',
       '',
       path.resolve(__dirname, '..') +
-        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license2.json',
       '123',
       '123',
       '123',
@@ -565,7 +617,7 @@ New Issues Introduced!
       '',
       '',
       path.resolve(__dirname, '..') +
-        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+        '/fixtures/snykTestOutput/test-goof-two-vuln-two-license.json',
       '124',
       '124',
       '124',
@@ -581,8 +633,7 @@ New Issues Introduced!
           description: 'New issue(s) found',
           state: 'failure',
           // eslint-disable-next-line
-          target_url:
-            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+          target_url: 'https://app.snyk.io/org/playground/projects',
         },
         /* eslint-disable no-useless-escape */
         prComment: {
@@ -590,10 +641,10 @@ New Issues Introduced!
 New Issues Introduced!
 ## Security
 1 issue found 
-* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
-\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
-\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
-\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+* 1/1: Prototype Pollution [Medium Severity]
+\t+ Via:   goof@0.0.3 => snyk@1.228.3 => configstore@3.1.2 => dot-prop@4.2.0
+\t+ Fixed in: dot-prop, 5.1.1
+\t+ Fixable by upgrade: snyk@1.290.1
 ## License
 1 issue found 
   1/1: 
@@ -733,7 +784,7 @@ New Issue Introduced!
       '',
       '',
       path.resolve(__dirname, '..') +
-        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+        '/fixtures/snykTestOutput/test-goof-two-vuln-two-license.json',
       '123',
       '123',
       '123',
@@ -749,8 +800,7 @@ New Issue Introduced!
           description: 'New issue(s) found',
           state: 'failure',
           // eslint-disable-next-line
-          target_url:
-            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+          target_url: 'https://app.snyk.io/org/playground/projects',
         },
         /* eslint-disable no-useless-escape */
         prComment: {
@@ -758,10 +808,10 @@ New Issue Introduced!
 New Issues Introduced!
 ## Security
 1 issue found 
-* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
-\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
-\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
-\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+* 1/1: Prototype Pollution [Medium Severity]
+\t+ Via:   goof@0.0.3 => snyk@1.228.3 => configstore@3.1.2 => dot-prop@4.2.0
+\t+ Fixed in: dot-prop, 5.1.1
+\t+ Fixable by upgrade: snyk@1.290.1
 ## License
 1 issue found 
   1/1: 
@@ -825,7 +875,7 @@ New Issues Introduced!
       '',
       '',
       path.resolve(__dirname, '..') +
-        '/fixtures/snyktest-goof-with-one-more-vuln-and-one-more-license.json',
+        '/fixtures/snykTestOutput/test-goof-two-vuln-two-license.json',
       '123',
       '123',
       '123',
@@ -841,8 +891,7 @@ New Issues Introduced!
           description: 'New issue(s) found',
           state: 'failure',
           // eslint-disable-next-line
-          target_url:
-            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789',
+          target_url: 'https://app.snyk.io/org/playground/projects',
         },
         /* eslint-disable no-useless-escape */
         prComment: {
@@ -850,10 +899,10 @@ New Issues Introduced!
 New Issues Introduced!
 ## Security
 1 issue found 
-* 1/1: Regular Expression Denial of Service (ReDoS) [High Severity]
-\t+ Via:   goof@0.0.3 => express-fileupload@0.0.5 => @snyk/nodejs-runtime-agent@1.14.0 => acorn@5.7.3
-\t+ Fixed in: acorn, 5.7.4, 6.4.1, 7.1.1
-\t+ Fixable by upgrade: @snyk/nodejs-runtime-agent@1.14.0=>acorn@5.7.4
+* 1/1: Prototype Pollution [Medium Severity]
+\t+ Via:   goof@0.0.3 => snyk@1.228.3 => configstore@3.1.2 => dot-prop@4.2.0
+\t+ Fixed in: dot-prop, 5.1.1
+\t+ Fixable by upgrade: snyk@1.290.1
 ## License
 1 issue found 
   1/1: 
