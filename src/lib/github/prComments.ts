@@ -152,7 +152,7 @@ export const createPrComment = async (
 
 export const deletePrComment = async (
   ghDetails: ghDetails
-) : Promise<void> => {
+) : Promise<ghPrCommentsStatus> => {
 
   const baseUrl = process.env.GH_API || 'https://api.github.com';
   const commentUrl = `/repos/${ghDetails.orgName}/${ghDetails.repoName}/issues/${ghDetails.prNumber}/comments`;
@@ -191,5 +191,5 @@ export const deletePrComment = async (
       url);
   });
 
-  return 
+  return ghResponse.data as ghPrCommentsStatus
 }
