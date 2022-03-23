@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import { snykProjectDetails } from "../types";
 import { ghDetails, ghCommitStatusState, ghCommitStatus } from "./types"
 import * as debugLib from 'debug';
@@ -42,16 +42,16 @@ export const sendCommitStatus = async (snykDeltaBinaryResult: number, snykProjec
   
       const baseUrl = process.env.GH_API || 'https://api.github.com'
   
-      const requestHeaders: Object = {
+      const requestHeaders: AxiosRequestHeaders = {
         'Content-Type': 'application/json',
         Authorization: `token ${ghDetails.token}`,
       };
-      const ghClient = axios.create({
+      const config: AxiosRequestConfig = {
         baseURL: baseUrl,
         responseType: 'json',
         headers: { ...requestHeaders },
-      });
-
+      }
+      const ghClient = axios.create(config);
 
       const ghResponse = await ghClient.post(
         `/repos/${ghDetails.orgName}/${ghDetails.repoName}/statuses/${ghDetails.commitSha}`,
