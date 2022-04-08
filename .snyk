@@ -1,6 +1,18 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.19.0
-ignore: {}
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JS-ASYNC-2441827:
+    - snyk-config > nconf > async:
+        reason: no patch available
+        expires: '2022-05-08T16:45:38.294Z'
+  SNYK-JS-MINIMIST-2429795:
+    - snyk-delta > snyk-api-ts-client > snyk-config > minimist:
+        reason: no patch available
+        expires: '2022-05-08T16:45:38.294Z'
+    - snyk-delta > snyk-api-ts-client > snyk-request-manager > snyk-config > minimist:
+        reason: no patch available
+        expires: '2022-05-08T16:45:38.294Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-450202:
