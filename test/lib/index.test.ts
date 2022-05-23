@@ -52,6 +52,10 @@ beforeAll(() => {
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
           );
+        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272788/dep-graph':
+          return fs.readFileSync(
+            fixturesFolderPath + 'goof-depgraph-from-api.json',
+          );
         case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272790/dep-graph':
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
