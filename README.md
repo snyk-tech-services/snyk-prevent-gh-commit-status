@@ -1,5 +1,8 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/snyk-tech-services/snyk-prevent-gh-commit-status/badge.svg)](https://snyk.io/test/github/snyk-tech-services/snyk-prevent-gh-commit-status)
 [![CircleCI](https://circleci.com/gh/snyk-tech-services/snyk-prevent-gh-commit-status.svg?style=svg)](https://circleci.com/gh/snyk-tech-services/snyk-prevent-gh-commit-status)
+[![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Not%20Maintained-yellow.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+
+**This repository is not in active development and critical bug fixes only will be considered.**
 
 ## snyk-prevent-gh-commit-status
 Little module to POST commit status of a PR the result of [snyk-delta](https://github.com/snyk-tech-services/snyk-delta) executed in the CI.
@@ -23,10 +26,10 @@ Enhancements are coming up to improve visibility and clarity on the issues findi
 
 ```
 snyk-prevent-gh-commit-status-linux
- /path/to/snykTestResults.json 
- <GITHUB_TOKEN> 
- <GH_ORG_NAME> 
- <GH_REPO_NAME> 
+ /path/to/snykTestResults.json
+ <GITHUB_TOKEN>
+ <GH_ORG_NAME>
+ <GH_REPO_NAME>
  <GH_COMMIT_SHA1>
  <GH_PR_NUMBER>
  <LINK_TO_CI_JOB - optional>
@@ -35,11 +38,11 @@ snyk-prevent-gh-commit-status-linux
 ### Snyk CLI in bash
 ```
 > snyk test --json-file-output=snykTestResults.json || true
-> ./snyk-prevent-gh-commit-status-linux 
-    ./snykTestResults.json 
-    <GITHUB_TOKEN> 
-    <GH_ORG_NAME> 
-    <GH_REPO_NAME> 
+> ./snyk-prevent-gh-commit-status-linux
+    ./snykTestResults.json
+    <GITHUB_TOKEN>
+    <GH_ORG_NAME>
+    <GH_REPO_NAME>
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
@@ -49,11 +52,11 @@ snyk-prevent-gh-commit-status-linux
 ### Snyk CLI in bash using npx
 ```
 > snyk test --json-file-output=snykTestResults.json || true
-> npx snyk-prevent-gh-commit-status 
-    ./snykTestResults.json 
-    <GITHUB_TOKEN> 
-    <GH_ORG_NAME> 
-    <GH_REPO_NAME> 
+> npx snyk-prevent-gh-commit-status
+    ./snykTestResults.json
+    <GITHUB_TOKEN>
+    <GH_ORG_NAME>
+    <GH_REPO_NAME>
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
@@ -84,11 +87,11 @@ export GH_API='https://ghe-hostname/apiendpoint'
 #### Additional option to enable snykDelta Debug
 ```
 export SNYK_DEBUG=true
-./snyk-prevent-gh-commit-status-linux 
-    ./snykTestResults.json 
-    <GITHUB_TOKEN> 
-    <GH_ORG_NAME> 
-    <GH_REPO_NAME> 
+./snyk-prevent-gh-commit-status-linux
+    ./snykTestResults.json
+    <GITHUB_TOKEN>
+    <GH_ORG_NAME>
+    <GH_REPO_NAME>
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
@@ -103,11 +106,11 @@ If some vulnerabilities are found comment listing the vulnerabilities will still
 #### Debug
 use DEBUG=snyk* to enable snyk-prevent-gh-commit-status
 ```
-DEBUG=snyk* ./snyk-prevent-gh-commit-status-linux 
-    ./snykTestResults.json 
-    <GITHUB_TOKEN> 
-    <GH_ORG_NAME> 
-    <GH_REPO_NAME> 
+DEBUG=snyk* ./snyk-prevent-gh-commit-status-linux
+    ./snykTestResults.json
+    <GITHUB_TOKEN>
+    <GH_ORG_NAME>
+    <GH_REPO_NAME>
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
@@ -119,11 +122,11 @@ or to enable both snykDelta and snyk-prevent-gh-commit-status debug
 
 ```
 export SNYK_DEBUG=true
-DEBUG=snyk* ./snyk-prevent-gh-commit-status-linux 
-    ./snykTestResults.json 
-    <GITHUB_TOKEN> 
-    <GH_ORG_NAME> 
-    <GH_REPO_NAME> 
+DEBUG=snyk* ./snyk-prevent-gh-commit-status-linux
+    ./snykTestResults.json
+    <GITHUB_TOKEN>
+    <GH_ORG_NAME>
+    <GH_REPO_NAME>
     <CIRCLE_SHA1>
     <GH_PR_NUMBER>
     <LINK_TO_CI_JOB - optional>
