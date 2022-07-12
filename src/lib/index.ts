@@ -26,23 +26,23 @@ const main = async () => {
     let keepHistory = false;
     let setPassIfNoBaselineFlag = false;
     let detailsLink = '';
+    let failOn = undefined
 
     const options = process.argv.slice(8)
 
     options.forEach(option => {
-      if (option === 'keepHistory')
-      {
+      if (option === 'keepHistory') {
         keepHistory = true
-      } else if (option === 'setPassIfNoBaselineFlag')
-      {
+      } else if (option === 'setPassIfNoBaselineFlag') {
         setPassIfNoBaselineFlag = true
-      } else
-      {
+      } else if(option === 'upgradable' || option === 'patchable' || option === 'all') {
+        failOn = option
+      } else {
         detailsLink = option || ''
       }
     })
 
-    debug(`running snyk-prevent-gh-commit-status with org: ${ghOrg} repo: ${ghRepo} commit: ${ghSha} PRNumber: ${ghPRNumber} keepHistory: ${keepHistory} setPassIfNoBaselineFlag: ${setPassIfNoBaselineFlag} detailsLink: ${detailsLink}`)
+    debug(`running snyk-prevent-gh-commit-status with org: ${ghOrg} repo: ${ghRepo} commit: ${ghSha} PRNumber: ${ghPRNumber} keepHistory: ${keepHistory} setPassIfNoBaselineFlag: ${setPassIfNoBaselineFlag} detailsLink: ${detailsLink} failOn: ${failOn}`)
 
     const snykDeltaDebug = process.env.SNYK_DEBUG ? true : false; // process.argv.slice(2)[6] == 'debug' ? true : false;
     const jsonResultsFromSnykTest = fs
@@ -69,6 +69,7 @@ const main = async () => {
         currentResults,
         snykDeltaDebug,
         setPassIfNoBaselineFlag,
+        failOn,
       )) as SnykDeltaOutput;
       
       const parsedCurrentResults = JSON.parse(currentResults);

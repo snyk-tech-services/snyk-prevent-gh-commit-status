@@ -34,6 +34,7 @@ snyk-prevent-gh-commit-status-linux
  <GH_PR_NUMBER>
  <LINK_TO_CI_JOB - optional>
  <keepHistory - optional - if set the tool will post a new comment at each run otherwise it will update the existing comment>
+ <failOn value - optional - if set, the commit status fails only if there are issues fixable by upgrade or patch or both.
 ```
 ### Snyk CLI in bash
 ```
@@ -102,6 +103,10 @@ export SNYK_DEBUG=true
 #### No baseline
 In case of an unmonitored project, it is possible to force the snyk-delta result so snyk-prevent-gh-commit-status will not fail.
 If some vulnerabilities are found comment listing the vulnerabilities will still be the post on the PR.
+
+#### Fail on
+If set, the commit status fails only if there are issues fixable by upgrade or patch or both.
+See [Snyk CLI documentation](https://docs.snyk.io/snyk-cli/test-for-vulnerabilities/advanced-failing-of-builds-in-snyk-cli) and [Snyk-delta README usage section](https://github.com/snyk-tech-services/snyk-delta#usage).
 
 #### Debug
 use DEBUG=snyk* to enable snyk-prevent-gh-commit-status
