@@ -1060,4 +1060,268 @@ New Issues Introduced!
       },
     ]);
   });
+
+  test('[snyk-delta module] Is it working with passing with failOn upgradable', async () => {
+    let response;
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snykTestOutput/test-goof-two-vuln-two-license.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      'upgradable',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url: 'https://app.snyk.io/org/playground/projects',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {
+          body: `### ******* Vulnerabilities report for commit number 123 *******
+New Issues Introduced!
+## Security
+1 issue found 
+* 1/1: Prototype Pollution [Medium Severity]
+\t+ Via:   goof@0.0.3 => snyk@1.228.3 => configstore@3.1.2 => dot-prop@4.2.0
+\t+ Fixed in: dot-prop, 5.1.1
+\t+ Fixable by upgrade: snyk@1.290.1
+## License
+1 issue found 
+  1/1: 
+      Artistic-2.0 license 
+      [Medium Severity]
+\t+ Via: goof@1.0.1 => npm@7.12.0
+`,
+        },
+        /* eslint-enable no-useless-escape */
+      },
+    ]);
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') + '/fixtures/snyktest-gomod.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
+      },
+    ]);
+
+    const requestHeaders: Record<string, any> = {
+      'Content-Type': 'application/json',
+      Authorization: `token 123`,
+    };
+
+    const ghClient = axios.create({
+      baseURL: 'https://api.github.com',
+      responseType: 'json',
+      headers: { ...requestHeaders },
+    });
+
+    const commentUrl = `/repos/123/123/issues/123/comments`;
+
+    const ghResponse = await ghClient.get(commentUrl);
+
+    expect(ghResponse.data).toEqual([
+      {
+        id: 1,
+        body:
+          '### ******* Vulnerabilities report for commit number 123 *******',
+        url: 'https://api.github.com/repos/123/123/issues/123/comments/1',
+      },
+    ]);
+  });
+  test('[snyk-delta module] Is it working with failing with failOn patchable', async () => {
+    let response;
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snykTestOutput/test-goof-two-vuln-two-license.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      'patchable',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url: 'https://app.snyk.io/org/playground/projects',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {},
+        /* eslint-enable no-useless-escape */
+      },
+    ]);
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') + '/fixtures/snyktest-gomod.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
+      },
+    ]);
+
+    const requestHeaders: Record<string, any> = {
+      'Content-Type': 'application/json',
+      Authorization: `token 123`,
+    };
+
+    const ghClient = axios.create({
+      baseURL: 'https://api.github.com',
+      responseType: 'json',
+      headers: { ...requestHeaders },
+    });
+
+    const commentUrl = `/repos/123/123/issues/123/comments`;
+
+    const ghResponse = await ghClient.get(commentUrl);
+
+    expect(ghResponse.data).toEqual([]);
+  });
+
+  test('[snyk-delta module] Is it working with passing with failOn all', async () => {
+    let response;
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') +
+        '/fixtures/snykTestOutput/test-goof-two-vuln-two-license.json',
+      '123',
+      '123',
+      '123',
+      '123',
+      '123',
+      'all',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - package-lock.json)',
+          description: 'New issue(s) found',
+          state: 'failure',
+          // eslint-disable-next-line
+          target_url: 'https://app.snyk.io/org/playground/projects',
+        },
+        /* eslint-disable no-useless-escape */
+        prComment: {
+          body: `### ******* Vulnerabilities report for commit number 123 *******
+New Issues Introduced!
+## Security
+1 issue found 
+* 1/1: Prototype Pollution [Medium Severity]
+\t+ Via:   goof@0.0.3 => snyk@1.228.3 => configstore@3.1.2 => dot-prop@4.2.0
+\t+ Fixed in: dot-prop, 5.1.1
+\t+ Fixable by upgrade: snyk@1.290.1
+## License
+1 issue found 
+  1/1: 
+      Artistic-2.0 license 
+      [Medium Severity]
+\t+ Via: goof@1.0.1 => npm@7.12.0
+`,
+        },
+        /* eslint-enable no-useless-escape */
+      },
+    ]);
+
+    process.argv = [
+      '',
+      '',
+      path.resolve(__dirname, '..') + '/fixtures/snyktest-gomod.json',
+      '123',
+      '123',
+      '123',
+      '123',
+    ];
+    response = await main();
+    expect(response).toEqual([
+      {
+        status: {
+          context: 'Snyk Prevent (playground - go.mod)',
+          description: 'No new issue found',
+          state: 'success',
+          // eslint-disable-next-line
+          target_url:
+            'https://app.snyk.io/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786',
+        },
+        prComment: {},
+      },
+    ]);
+
+    const requestHeaders: Record<string, any> = {
+      'Content-Type': 'application/json',
+      Authorization: `token 123`,
+    };
+
+    const ghClient = axios.create({
+      baseURL: 'https://api.github.com',
+      responseType: 'json',
+      headers: { ...requestHeaders },
+    });
+
+    const commentUrl = `/repos/123/123/issues/123/comments`;
+
+    const ghResponse = await ghClient.get(commentUrl);
+
+    expect(ghResponse.data).toEqual([
+      {
+        id: 1,
+        body:
+          '### ******* Vulnerabilities report for commit number 123 *******',
+        url: 'https://api.github.com/repos/123/123/issues/123/comments/1',
+      },
+    ]);
+  });
 });
