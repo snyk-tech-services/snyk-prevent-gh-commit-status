@@ -5,3 +5,4 @@ dist
 *.log
 .eslintcache
 snyk-prevent-gh-commit-status-*
+.dccache
