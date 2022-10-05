@@ -1,8 +1,10 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/snyk-tech-services/snyk-prevent-gh-commit-status/badge.svg)](https://snyk.io/test/github/snyk-tech-services/snyk-prevent-gh-commit-status)
 [![CircleCI](https://circleci.com/gh/snyk-tech-services/snyk-prevent-gh-commit-status.svg?style=svg)](https://circleci.com/gh/snyk-tech-services/snyk-prevent-gh-commit-status)
-[![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Not%20Maintained-yellow.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+[![Inactively Maintained](https://img.shields.io/badge/Maintenance%20Level-Inactively%20Maintained-yellowgreen.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
 
-**This repository is not in active development and critical bug fixes only will be considered.**
+
+**This repository is in maintenance mode, no new features are being developed. Bug & security fixes will continue to be delivered. Open source contributions are welcome for small features & fixes (no breaking changes)**
+
 
 ## snyk-prevent-gh-commit-status
 Little module to POST commit status of a PR the result of [snyk-delta](https://github.com/snyk-tech-services/snyk-delta) executed in the CI.
