@@ -1,6 +1,38 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.19.0
-ignore: {}
+version: v1.22.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JS-ANSIREGEX-1583908:
+    - nconf > yargs > string-width > strip-ansi > ansi-regex:
+        reason: no upgrade
+        expires: '2022-11-20T13:31:36.853Z'
+    - nconf > yargs > cliui > strip-ansi > ansi-regex:
+        reason: no upgrade
+        expires: '2022-11-20T13:31:36.854Z'
+    - nconf > yargs > cliui > string-width > strip-ansi > ansi-regex:
+        reason: None given
+        expires: '2022-11-20T13:31:36.854Z'
+    - nconf > yargs > cliui > wrap-ansi > strip-ansi > ansi-regex:
+        reason: no patch
+        expires: '2022-11-20T13:31:36.854Z'
+    - nconf > yargs > cliui > wrap-ansi > string-width > strip-ansi > ansi-regex:
+        reason: no patch
+        expires: '2022-11-20T13:31:36.854Z'
+  SNYK-JS-MINIMIST-2429795:
+    - snyk-api-ts-client > snyk-config > minimist:
+        reason: no patch
+        expires: '2022-11-20T13:31:36.854Z'
+    - snyk-api-ts-client > snyk-request-manager > snyk-config > minimist:
+        reason: no patch
+        expires: '2022-11-20T13:31:36.854Z'
+  SNYK-JS-NCONF-2395478:
+    - nconf:
+        reason: no patch
+        expires: '2022-11-20T13:31:36.854Z'
+  SNYK-JS-SNYK-3037342:
+    - snyk-api-ts-client > snyk:
+        reason: no patch
+        expires: '2022-11-20T13:31:36.854Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-450202:
