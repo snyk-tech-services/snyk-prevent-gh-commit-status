@@ -18,7 +18,7 @@
     "build-watch": "tsc -w",
     "prepare": "npm run build",
     "snyk-test": "snyk test",
-    "pkg-binaries": "npx pkg . -t node18-linux-x64,node18-macos-x64,node18-win-x64 --out-path ./dist/binaries"
+    "pkg-binaries": "npx pkg . -t node16-linux-x64,node16-macos-x64,node16-win-x64 --out-path ./dist/binaries"
   },
   "types": "./dist/index.d.ts",
   "repository": {
@@ -28,7 +28,7 @@
   "author": "Snyk Tech Services",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=18"
+    "node": ">=16"
   },
   "files": [
     "dist"
