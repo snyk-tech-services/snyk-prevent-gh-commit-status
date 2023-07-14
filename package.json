@@ -6,8 +6,8 @@
     "snyk-prevent-gh-commit-status": "dist/index.js"
   },
   "scripts": {
-    "format:check": "prettier --check '{''{lib,test}/!(fixtures)/**/*,*}.{js,ts,json,yml}'",
-    "format": "prettier --write '{''{lib,test}/!(fixtures)/**/*,*}.{js,ts,json,yml}'",
+    "format:check": "prettier --check '{''{lib}/!(fixtures)/**/*,*}.{js,ts,json,yml}'",
+    "format": "prettier --write '{''{lib}/!(fixtures)/**/*,*}.{js,ts,json,yml}'",
     "lint": "npm run format:check && npm run lint:eslint",
     "lint:eslint": "eslint --cache '{lib,test}/**/*.ts'",
     "test": "npm run lint && npm run test:unit",
@@ -18,7 +18,7 @@
     "build-watch": "tsc -w",
     "prepare": "npm run build",
     "snyk-test": "snyk test",
-    "pkg-binaries": "npx pkg . -t node128-linux-x64,node18-macos-x64,node18-win-x64 --out-path ./dist/binaries"
+    "pkg-binaries": "npx pkg . -t node18-linux-x64,node18-macos-x64,node18-win-x64 --out-path ./dist/binaries"
   },
   "types": "./dist/index.d.ts",
   "repository": {
@@ -41,7 +41,7 @@
     "debug": "^4.1.1",
     "lodash": "^4.17.21",
     "snyk-config": "^4.0.0",
-    "snyk-delta": "^1.8.0",
+    "snyk-delta": "^1.10.0",
     "source-map-support": "^0.5.16",
     "tslib": "^1.10.0"
   },

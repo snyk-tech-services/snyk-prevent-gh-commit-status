@@ -7,33 +7,46 @@ import axios from 'axios';
 const fixturesFolderPath = path.resolve(__dirname, '..') + '/fixtures/';
 
 beforeAll(() => {
-  return nock('https://snyk.io')
+  nock('https://api.snyk.io')
+    .persist()
+    .get(/^(?!.*xyz).*$/)
+    .reply(200, (uri) => {
+      switch (uri) {
+        case '/rest/orgs/09235fa4-c241-42c6-8c63-c053bd272780/projects?version=2023-05-29&limit=10':
+          return fs.readFileSync(
+            fixturesFolderPath + 'api-response-rest-projects-all-projects.json',
+          );
+        case '/rest/orgs?version=2023-06-22~beta&limit=10&slug=playground':
+          return fs.readFileSync(
+            fixturesFolderPath + 'api-response-org-id-from-slug.json',
+          );
+        default:
+      }
+    });
+
+  nock('https://snyk.io')
     .persist()
     .post(/^(?!.*xyz).*$/)
     .reply(200, (uri) => {
       switch (uri) {
-        case '/api/v1/org/playground/projects':
-          return fs.readFileSync(
-            fixturesFolderPath + 'api-response-projects-all-projects.json',
-          );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/aggregated-issues':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272786/aggregated-issues':
           return fs.readFileSync(
             fixturesFolderPath + 'apitest-gomod-aggregated.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/dep-graph':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272786/dep-graph':
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787/aggregated-issues':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272787/aggregated-issues':
           return fs.readFileSync(
             fixturesFolderPath + 'apitest-gomod-aggregated.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/aggregated-issues':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272789/aggregated-issues':
           return fs.readFileSync(
             fixturesFolderPath +
               '/api-response/test-goof-aggregated-one-vuln-one-license.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272790/aggregated-issues':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272790/aggregated-issues':
           return fs.readFileSync(
             fixturesFolderPath +
               '/api-response/test-goof-aggregated-one-vuln-one-license.json',
@@ -44,40 +57,40 @@ beforeAll(() => {
     .get(/^(?!.*xyz).*$/)
     .reply(200, (uri) => {
       switch (uri) {
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272786/dep-graph':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272786/dep-graph':
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272787/dep-graph':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272787/dep-graph':
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272788/dep-graph':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272788/dep-graph':
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272790/dep-graph':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272790/dep-graph':
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/dep-graph':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272789/dep-graph':
           return fs.readFileSync(
             fixturesFolderPath + 'goof-depgraph-from-api.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/snyk:lic:npm:goof:GPL-2.0/paths?perPage=100&page=1':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/snyk:lic:npm:goof:GPL-2.0/paths?perPage=100&page=1':
           return fs.readFileSync(
             fixturesFolderPath + 'snyk-lic-npm-goof-GPL-2-0-issue-paths.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-PACRESOLVER-1564857/paths?perPage=100&page=1':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-PACRESOLVER-1564857/paths?perPage=100&page=1':
           return fs.readFileSync(
             fixturesFolderPath + 'SNYK-JS-PACRESOLVER-1564857-issue-paths.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-DOTPROP-543489/paths?perPage=100&page=1':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-DOTPROP-543489/paths?perPage=100&page=1':
           return fs.readFileSync(
             fixturesFolderPath +
               'SNYK-JS-DOTPROP-543489-issue-paths-page1.json',
           );
-        case '/api/v1/org/playground/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-ACORN-559469/paths?perPage=100&page=1':
+        case '/api/v1/org/09235fa4-c241-42c6-8c63-c053bd272780/project/09235fa4-c241-42c6-8c63-c053bd272789/issue/SNYK-JS-ACORN-559469/paths?perPage=100&page=1':
           return fs.readFileSync(
             fixturesFolderPath + 'SNYK-JS-ACORN-559469-issue-paths.json',
           );
