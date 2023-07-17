@@ -1,0 +1,20 @@
+{
+    "data": [
+      {
+        "attributes": {
+          "group_id": "09235fa4-c241-42c6-8c63-c053bd2727ab",
+          "is_personal": false,
+          "name": "playground",
+          "slug": "playground"
+        },
+        "id": "09235fa4-c241-42c6-8c63-c053bd272780",
+        "type": "org"
+      }
+    ],
+    "jsonapi": {
+      "version": "1.0"
+    },
+    "links": {
+      "prev": "/rest/orgs?ending_before=v1.eyJuYW1lIjoiYW50b2luZSBwbGF5Z3JvdW5kIiwic2x1ZyI6ImFudG9pbmUtcGxheWdyb3VuZCJ9&limit=10&slug=customerorg&version=2023-05-29"
+    }
+  }

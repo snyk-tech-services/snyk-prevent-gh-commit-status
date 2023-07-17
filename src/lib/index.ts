@@ -142,7 +142,7 @@ const main = async () => {
             status: ghCommitStatusUpdateResponse,
             prComment: ghPrCommentsCreateResponse,
           });
-        } catch (err) {
+        } catch (err: any) {
           console.error(err.message);
         }
       } else {
@@ -151,8 +151,8 @@ const main = async () => {
     }
 
     return responseArray;
-  } catch (err) {
-    throw new Error(err);
+  } catch (err: any) {
+    throw new Error(err.message);
   }
 };
 
