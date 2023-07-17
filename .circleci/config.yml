@@ -7,7 +7,7 @@ jobs:
             - image: cimg/node:16.20.1
         steps:
             - checkout
-            - run: npm install semantic-release @semantic-release/exec pkg --save-dev --legacy-peer-deps
+            - run: npm install semantic-release@19.0.5 @semantic-release/exec pkg --save-dev --legacy-peer-deps
             - run: npm install
             - run: npm test
             - snyk/scan:
@@ -17,7 +17,7 @@ jobs:
             - run: npx semantic-release
     build-test:
         docker:
-            - image: cimg/node:18.4.0
+            - image: cimg/node:16.20.1
         steps:
             - checkout
             - run: npm install
